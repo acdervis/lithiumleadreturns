@@ -118,21 +118,21 @@ df = pl.DataFrame({
     'lacid_electricity_costs': lacid_electricity_costs,
 })
 
-df = df.with_columns(pl.sum_horizontal('lithium_purchase_costs', 'lithium_electricity_costs').cumsum().alias('lithium_costs'))
+df = df.with_columns(pl.sum_horizontal('lithium_purchase_costs', 'lithium_electricity_costs').cumsum().alias('Lityum Gider'))
 df = df.with_columns(pl.sum_horizontal('lacid_purchase_costs',
                                        'lacid_maintenance_costs',
                                        'lacid_waste_costs',
                                        'lacid_electricity_costs',
-                                       ).cumsum().alias('lacid_costs'))
+                                       ).cumsum().alias('Kurşun-Asit Gider'))
 
-molten = df.melt('date', value_vars=['lithium_costs', 'lacid_costs'])
+molten = df.melt('date', value_vars=['Lityum Gider', 'Kurşun-Asit Gider']).rename({'variable': 'Tür'})
 
 p_select = alt.selection_multi(on='mouseover', nearest=True)
 st.altair_chart(
     alt.Chart(molten.filter(pl.col('date') < TODAY.replace(year=TODAY.year + projection_time))).mark_line().encode(
-        x='date',
-        y='value',
-        color='variable',
+        x=alt.X('date', title=None),
+        y=alt.Y('value', title="Kümülatif Gider ($)"),
+        color='Tür',
     ).add_params(
         p_select
     ).interactive(),
