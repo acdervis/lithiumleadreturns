@@ -28,7 +28,10 @@ with col_left:
                                )
     lacid_maintenance_interval = st.number_input("Bakım Periyodu",
                                                  key='lacid_maintenance_interval',
-                                                 value=1,
+                                                 value=1.0,
+                                                 min_value=0.1,
+                                                 step=0.1,
+                                                 format='%0.1f',
                                                  help="Senede kaç bakım yapılacağı",
                                                  )
     lacid_maintenance_cost = st.number_input("Bakım Masrafı (₺)",
