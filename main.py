@@ -127,7 +127,7 @@ df = df.with_columns(pl.sum_horizontal('lacid_purchase_costs',
 
 molten = df.melt('date', value_vars=['Lityum Gider', 'Kurşun-Asit Gider']).rename({'variable': 'Tür'})
 
-p_select = alt.selection_multi(on='mouseover', nearest=True)
+p_select = alt.selection_point(on='mouseover', nearest=True)
 st.altair_chart(
     alt.Chart(molten.filter(pl.col('date') < TODAY.replace(year=TODAY.year + projection_time))).mark_line().encode(
         x=alt.X('date', title=None),
