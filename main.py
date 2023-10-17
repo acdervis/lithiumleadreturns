@@ -8,6 +8,7 @@ MAX_MO = MAX_YR * 12 + 1
 TODAY = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
 DOLLAR_TL = 1/28
 
+# st.title("Kurşun-Asit - Lityum Akü")
 col_left, col_mid, col_right = st.columns(3)
 
 
@@ -123,19 +124,27 @@ df = df.with_columns(pl.sum_horizontal('lacid_purchase_costs',
                                        'lacid_maintenance_costs',
                                        'lacid_waste_costs',
                                        'lacid_electricity_costs',
-                                       ).cumsum().alias('Kurşun-Asit Gider'))
+                                       ).cumsum().alias('Kursun-Asit Gider'))
 
-molten = df.melt('date', value_vars=['Lityum Gider', 'Kurşun-Asit Gider']).rename({'variable': 'Tür'})
+molten = df.melt('date', value_vars=['Lityum Gider', 'Kursun-Asit Gider']).rename({'variable': 'Tür'})
 
-p_select = alt.selection_point(on='mouseover', nearest=True)
+# p_select = alt.selection_point(on='mouseover', nearest=True)
 st.altair_chart(
     alt.Chart(molten.filter(pl.col('date') < TODAY.replace(year=TODAY.year + projection_time))).mark_line().encode(
         x=alt.X('date', title=None),
         y=alt.Y('value', title="Kümülatif Gider ($)"),
         color='Tür',
-    ).add_params(
-        p_select
-    ).interactive(),
+    ),
     theme='streamlit',
     use_container_width=True
 )
+
+csv = df.write_csv(
+    float_precision=2,
+).encode('utf-8')
+
+st.download_button("Datayı İndir",
+                   data=csv,
+                   file_name='lithyumkursun.csv',
+                   mime='text/csv',
+                   )
